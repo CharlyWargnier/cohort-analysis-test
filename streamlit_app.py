@@ -8,7 +8,7 @@ import datetime as dt
 import missingno as msno
 from textwrap import wrap
 
-st.set_option('deprecation.showPyplotGlobalUse', False)
+st.set_option("deprecation.showPyplotGlobalUse", False)
 
 # Loading dataset
 transaction_df = pd.read_excel("transaction.xlsx")
@@ -79,33 +79,44 @@ transaction_df["CohortIndex"] = years_diff * 12 + months_diff + 1
 st.write(transaction_df.head(5))
 
 # Counting daily active user from each chort
-grouping = transaction_df.groupby(['CohortMonth', 'CohortIndex'])
+grouping = transaction_df.groupby(["CohortMonth", "CohortIndex"])
 # Counting number of unique customer Id's falling in each group of CohortMonth and CohortIndex
-cohort_data = grouping['customer_id'].apply(pd.Series.nunique)
+cohort_data = grouping["customer_id"].apply(pd.Series.nunique)
 cohort_data = cohort_data.reset_index()
- # Assigning column names to the dataframe created above
-cohort_counts = cohort_data.pivot(index='CohortMonth',
-                                 columns ='CohortIndex',
-                                 values = 'customer_id')
+# Assigning column names to the dataframe created above
+cohort_counts = cohort_data.pivot(
+    index="CohortMonth", columns="CohortIndex", values="customer_id"
+)
 # Printing top 5 rows of Dataframe
 cohort_data.head()
 
-cohort_sizes = cohort_counts.iloc[:,0]
+cohort_sizes = cohort_counts.iloc[:, 0]
 retention = cohort_counts.divide(cohort_sizes, axis=0)
 # Coverting the retention rate into percentage and Rounding off.
-retention.round(3)*100
+retention.round(3) * 100
 
-retention.index = retention.index.strftime('%Y-%m')
-# Initialize the figure
-plt.figure(figsize=(16, 10))
-# Adding a title
-plt.title('Average Standard Cost: Monthly Cohorts', fontsize = 14)
-# Creating the heatmap
-Repeats = sns.heatmap(retention, annot = True,vmin = 0.0, vmax =20,cmap="YlGnBu", fmt='g')
-plt.ylabel('Cohort Month')
-plt.xlabel('Cohort Index')
-plt.yticks( rotation='360')
-# plt.show()
+retention.index = retention.index.strftime("%Y-%m")
 
 
-st.pyplot()
+import plotly.graph_objs as go
+
+fig = go.Figure()
+
+fig.add_heatmap(
+    x=retention.columns, y=retention.index, z=retention, colorscale="cividis"
+)
+fig.layout.title = "Average Standard Cost: Monthly Cohorts"
+
+fig.layout.template = "none"
+
+fig.layout.width = 650
+
+fig.layout.height = 650
+
+fig.layout.xaxis.tickvals = retention.columns
+
+fig.layout.yaxis.tickvals = retention.index
+
+fig.layout.margin.b = 100
+
+fig
