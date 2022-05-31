@@ -113,7 +113,7 @@ retention.index = retention.index.strftime("%Y-%m")
 
 #############
 
-st.subheader("Monthly Cohorts for Average Standard Cost")
+st.subheader("Monthly cohorts showing customer retention rates")
 
 fig = go.Figure()
 
