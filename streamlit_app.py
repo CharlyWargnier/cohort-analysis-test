@@ -100,11 +100,15 @@ with st.form("my_form"):
     col1, col2 = st.columns(2)
 
     with col1:
-        list_price_slider = st.slider("list price (in $)", min_value=12, max_value=2091)
+        list_price_slider = st.slider(
+            "List price (in $)", step=500, min_value=12, max_value=2091
+        )
         # list_price_slider = st.slider("list_price", min_value=transaction_df["list_price"].min(), max_value=transaction_df["list_price"].max())
 
     with col2:
-        standard_cost_slider = st.slider("standard cost (in $)", min_value=7, max_value=1759)
+        standard_cost_slider = st.slider(
+            "Standard cost (in $)", step=500, min_value=7, max_value=1759
+        )
 
     # Every form must have a submit button.
     submitted = st.form_submit_button("Submit")
