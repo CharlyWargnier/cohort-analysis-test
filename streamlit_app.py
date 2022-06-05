@@ -34,14 +34,6 @@ with st.expander("Show the `Transactions` dataframe"):
     st.write(transaction_df)
 
 
-df = pd.DataFrame({"col1": ["a", "b", "c"], "col2": [3, 2, 1]})
-
-# column = df["col2"]
-column = df["col2"].max()
-# max_value = column.max()
-column
-
-
 # Inspect missing values in the dataset
 # st.write(transaction_df.isnull().values.sum())
 # Replace the ' 's with NaN
