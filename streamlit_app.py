@@ -34,6 +34,14 @@ with st.expander("Show the `Transactions` dataframe"):
     st.write(transaction_df)
 
 
+df = pd.DataFrame({"col1": ["a", "b", "c"], "col2": [3, 2, 1]})
+
+# column = df["col2"]
+column = df["col2"].max()
+# max_value = column.max()
+column
+
+
 # Inspect missing values in the dataset
 # st.write(transaction_df.isnull().values.sum())
 # Replace the ' 's with NaN
@@ -90,8 +98,35 @@ months_diff = transaction_month - cohort_month
 
 # Extract the difference in months from all previous values "+1" in addeded at the end so that first month is marked as 1 instead of 0 for easier interpretation. """
 
+
 transaction_df["CohortIndex"] = years_diff * 12 + months_diff + 1
 # st.write(transaction_df.head(5))
+
+
+with st.form("my_form"):
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        list_price_slider = st.slider("list price (in $)", min_value=12, max_value=2091)
+        # list_price_slider = st.slider("list_price", min_value=transaction_df["list_price"].min(), max_value=transaction_df["list_price"].max())
+
+    with col2:
+        standard_cost_slider = st.slider("standard cost (in $)", min_value=7, max_value=1759)
+
+    # Every form must have a submit button.
+    submitted = st.form_submit_button("Submit")
+
+    if submitted:
+
+        # selecting rows based on condition
+        transaction_df = transaction_df[
+            transaction_df["list_price"] > list_price_slider
+        ]
+        transaction_df = transaction_df[
+            transaction_df["list_price"] > standard_cost_slider
+        ]
+
 
 # Counting daily active user from each chort
 grouping = transaction_df.groupby(["CohortMonth", "CohortIndex"])
@@ -102,6 +137,7 @@ cohort_data = cohort_data.reset_index()
 cohort_counts = cohort_data.pivot(
     index="CohortMonth", columns="CohortIndex", values="customer_id"
 )
+
 # Printing top 5 rows of Dataframe
 # cohort_data.head()
 
@@ -113,7 +149,9 @@ retention.index = retention.index.strftime("%Y-%m")
 
 #############
 
-st.subheader("Monthly cohorts showing customer retention rates")
+# st.subheader("Monthly Cohorts for Average Standard Cost")
+
+# st.subheader("Monthly cohorts showing customer retention rates")
 
 fig = go.Figure()
 
@@ -121,7 +159,8 @@ fig.add_heatmap(
     x=retention.columns, y=retention.index, z=retention, colorscale="cividis"
 )
 
-# fig.layout.title = "Average Standard Cost: Monthly Cohorts"
+fig.layout.title = "Monthly cohorts showing customer retention rates"
+fig["layout"]["title"]["font"] = dict(size=25)
 fig.layout.template = "none"
 fig.layout.width = 750
 fig.layout.height = 750
