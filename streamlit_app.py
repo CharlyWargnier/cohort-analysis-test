@@ -89,40 +89,56 @@ years_diff = transcation_year - cohort_year
 months_diff = transaction_month - cohort_month
 
 # Extract the difference in months from all previous values "+1" in addeded at the end so that first month is marked as 1 instead of 0 for easier interpretation. """
-
-
 transaction_df["CohortIndex"] = years_diff * 12 + months_diff + 1
-# st.write(transaction_df.head(5))
+
+dtypes = transaction_df.dtypes.astype(str)
+# Show dtypes
+# dtypes
+
+transaction_df_new = transaction_df[
+    ["brand", "product_line", "list_price", "standard_cost"]
+]
+new = [col for col in transaction_df_new]
+# show filtered dataframe (currently with 3 columns)
+# new
+
+# with st.form("my_form"):
+
+cole, col1, cole, col2, cole = st.columns([0.1, 1,0.05,1, 0.1])
+
+with col1:
+    sliderNew = st.selectbox("Pick a metric", new)
 
 
-with st.form("my_form"):
+with col2:
 
-    col1, col2 = st.columns(2)
+    if sliderNew == "brand":
+        col_one_list = transaction_df_new["brand"].tolist()
+        multiselect = st.multiselect("Select the value(s)", col_one_list, ["Solex", "Trek Bicycles"])
+        transaction_df = transaction_df[transaction_df["brand"].isin(multiselect)]
 
-    with col1:
+    elif sliderNew == "product_line":
+        col_one_list = transaction_df_new["product_line"].tolist()
+        multiselect = st.multiselect("Select the value(s)", col_one_list, ["Standard", "Road"])
+        transaction_df = transaction_df[
+            transaction_df["product_line"].isin(multiselect)
+        ]
+
+    elif sliderNew == "list_price":
         list_price_slider = st.slider(
             "List price (in $)", step=500, min_value=12, max_value=2091
         )
-        # list_price_slider = st.slider("list_price", min_value=transaction_df["list_price"].min(), max_value=transaction_df["list_price"].max())
-
-    with col2:
-        standard_cost_slider = st.slider(
-            "Standard cost (in $)", step=500, min_value=7, max_value=1759
-        )
-
-    # Every form must have a submit button.
-    submitted = st.form_submit_button("Submit")
-
-    if submitted:
-
-        # selecting rows based on condition
         transaction_df = transaction_df[
             transaction_df["list_price"] > list_price_slider
         ]
+
+    elif sliderNew == "standard_cost":
+        standard_cost_slider = st.slider(
+            "Standard cost (in $)", step=500, min_value=7, max_value=1759
+        )
         transaction_df = transaction_df[
             transaction_df["list_price"] > standard_cost_slider
         ]
-
 
 # Counting daily active user from each chort
 grouping = transaction_df.groupby(["CohortMonth", "CohortIndex"])
