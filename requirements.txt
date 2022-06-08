@@ -1,5 +1,4 @@
-# streamlit 
-streamlit==1.10.0rc1
+streamlit 
 seaborn
 missingno
 openpyxl
