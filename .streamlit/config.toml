@@ -1,6 +1,8 @@
+
 [theme]
-
-# Primary accent for interactive elements
-primaryColor="#152396"
-
+primaryColor = "#00B4B3"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F2F6"
+textColor = "#262730"
+font = "sans serif"
 
