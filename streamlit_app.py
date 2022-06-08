@@ -104,7 +104,7 @@ new = [col for col in transaction_df_new]
 
 # with st.form("my_form"):
 
-cole, col1, cole, col2, cole = st.columns([0.1, 1,0.05,1, 0.1])
+cole, col1, cole, col2, cole = st.columns([0.1, 1, 0.05, 1, 0.1])
 
 with col1:
     sliderNew = st.selectbox("Pick a metric", new)
@@ -112,14 +112,23 @@ with col1:
 
 with col2:
 
+    # Drop duplicate columns
+    # df2 = df.T.drop_duplicates().T
+    # print(df2)
+
     if sliderNew == "brand":
-        col_one_list = transaction_df_new["brand"].tolist()
-        multiselect = st.multiselect("Select the value(s)", col_one_list, ["Solex", "Trek Bicycles"])
+        # col_one_list = transaction_df_new["brand"].tolist()
+        col_one_list = transaction_df_new["brand"].drop_duplicates().tolist()
+        multiselect = st.multiselect(
+            "Select the value(s)", col_one_list, ["Solex", "Trek Bicycles"]
+        )
         transaction_df = transaction_df[transaction_df["brand"].isin(multiselect)]
 
     elif sliderNew == "product_line":
-        col_one_list = transaction_df_new["product_line"].tolist()
-        multiselect = st.multiselect("Select the value(s)", col_one_list, ["Standard", "Road"])
+        col_one_list = transaction_df_new["product_line"].drop_duplicates().tolist()
+        multiselect = st.multiselect(
+            "Select the value(s)", col_one_list, ["Standard", "Road"]
+        )
         transaction_df = transaction_df[
             transaction_df["product_line"].isin(multiselect)
         ]
