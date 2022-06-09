@@ -104,19 +104,23 @@ new = [col for col in transaction_df_new]
 
 # with st.form("my_form"):
 
+st.write("")
+
+
 cole, col1, cole, col2, cole = st.columns([0.1, 1, 0.05, 1, 0.1])
 
+
 with col1:
-    sliderNew = st.selectbox("Pick a metric", new)
+    MetricSlider01 = st.selectbox("Pick your 1st metric", new)
+
+    MetricSlider02 = st.selectbox("Pick your 2nd metric", new, index=2)
+
+    st.write("")
 
 
 with col2:
 
-    # Drop duplicate columns
-    # df2 = df.T.drop_duplicates().T
-    # print(df2)
-
-    if sliderNew == "brand":
+    if MetricSlider01 == "brand":
         # col_one_list = transaction_df_new["brand"].tolist()
         col_one_list = transaction_df_new["brand"].drop_duplicates().tolist()
         multiselect = st.multiselect(
@@ -124,7 +128,7 @@ with col2:
         )
         transaction_df = transaction_df[transaction_df["brand"].isin(multiselect)]
 
-    elif sliderNew == "product_line":
+    elif MetricSlider01 == "product_line":
         col_one_list = transaction_df_new["product_line"].drop_duplicates().tolist()
         multiselect = st.multiselect(
             "Select the value(s)", col_one_list, ["Standard", "Road"]
@@ -133,7 +137,7 @@ with col2:
             transaction_df["product_line"].isin(multiselect)
         ]
 
-    elif sliderNew == "list_price":
+    elif MetricSlider01 == "list_price":
         list_price_slider = st.slider(
             "List price (in $)", step=500, min_value=12, max_value=2091
         )
@@ -141,7 +145,7 @@ with col2:
             transaction_df["list_price"] > list_price_slider
         ]
 
-    elif sliderNew == "standard_cost":
+    elif MetricSlider01 == "standard_cost":
         standard_cost_slider = st.slider(
             "Standard cost (in $)", step=500, min_value=7, max_value=1759
         )
@@ -149,43 +153,85 @@ with col2:
             transaction_df["list_price"] > standard_cost_slider
         ]
 
-# Counting daily active user from each chort
-grouping = transaction_df.groupby(["CohortMonth", "CohortIndex"])
-# Counting number of unique customer Id's falling in each group of CohortMonth and CohortIndex
-cohort_data = grouping["customer_id"].apply(pd.Series.nunique)
-cohort_data = cohort_data.reset_index()
-# Assigning column names to the dataframe created above
-cohort_counts = cohort_data.pivot(
-    index="CohortMonth", columns="CohortIndex", values="customer_id"
-)
+    if MetricSlider02 == "brand":
+        # col_one_list = transaction_df_new["brand"].tolist()
+        col_one_list = transaction_df_new["brand"].drop_duplicates().tolist()
+        multiselect_02 = st.multiselect(
+            "Select the value(s)", col_one_list, ["Solex", "Trek Bicycles"], key=1
+        )
+        transaction_df = transaction_df[transaction_df["brand"].isin(multiselect)]
 
-# Printing top 5 rows of Dataframe
-# cohort_data.head()
+    elif MetricSlider02 == "product_line":
+        col_one_list = transaction_df_new["product_line"].drop_duplicates().tolist()
+        multiselect_02 = st.multiselect(
+            "Select the value(s)", col_one_list, ["Standard", "Road"]
+        )
+        transaction_df = transaction_df[
+            transaction_df["product_line"].isin(multiselect)
+        ]
 
-cohort_sizes = cohort_counts.iloc[:, 0]
-retention = cohort_counts.divide(cohort_sizes, axis=0)
-# Coverting the retention rate into percentage and Rounding off.
-retention = retention.round(3) * 100
-retention.index = retention.index.strftime("%Y-%m")
+    elif MetricSlider02 == "list_price":
+        list_price_slider = st.slider(
+            "List price (in $)", step=500, min_value=12, max_value=2091
+        )
+        transaction_df = transaction_df[
+            transaction_df["list_price"] > list_price_slider
+        ]
 
-#############
+    elif MetricSlider02 == "standard_cost":
+        standard_cost_slider = st.slider(
+            "Standard cost (in $)", step=500, min_value=7, max_value=1759
+        )
+        transaction_df = transaction_df[
+            transaction_df["list_price"] > standard_cost_slider
+        ]
+        
+        
 
-# st.subheader("Monthly Cohorts for Average Standard Cost")
+try:
 
-# st.subheader("Monthly cohorts showing customer retention rates")
+    # Counting daily active user from each chort
+    grouping = transaction_df.groupby(["CohortMonth", "CohortIndex"])
+    # Counting number of unique customer Id's falling in each group of CohortMonth and CohortIndex
+    cohort_data = grouping["customer_id"].apply(pd.Series.nunique)
+    cohort_data = cohort_data.reset_index()
+    # Assigning column names to the dataframe created above
+    cohort_counts = cohort_data.pivot(
+        index="CohortMonth", columns="CohortIndex", values="customer_id"
+    )
 
-fig = go.Figure()
+    # Printing top 5 rows of Dataframe
+    # cohort_data.head()
 
-fig.add_heatmap(
-    x=retention.columns, y=retention.index, z=retention, colorscale="cividis"
-)
+    cohort_sizes = cohort_counts.iloc[:, 0]
+    retention = cohort_counts.divide(cohort_sizes, axis=0)
+    # Coverting the retention rate into percentage and Rounding off.
+    retention = retention.round(3) * 100
+    retention.index = retention.index.strftime("%Y-%m")
 
-fig.layout.title = "Monthly cohorts showing customer retention rates"
-fig["layout"]["title"]["font"] = dict(size=25)
-fig.layout.template = "none"
-fig.layout.width = 750
-fig.layout.height = 750
-fig.layout.xaxis.tickvals = retention.columns
-fig.layout.yaxis.tickvals = retention.index
-fig.layout.margin.b = 100
-fig
+
+
+    #############
+
+    # st.subheader("Monthly Cohorts for Average Standard Cost")
+
+    # st.subheader("Monthly cohorts showing customer retention rates")
+
+    fig = go.Figure()
+
+    fig.add_heatmap(
+        x=retention.columns, y=retention.index, z=retention, colorscale="cividis"
+    )
+
+    fig.layout.title = "Monthly cohorts showing customer retention rates"
+    fig["layout"]["title"]["font"] = dict(size=25)
+    fig.layout.template = "none"
+    fig.layout.width = 750
+    fig.layout.height = 750
+    fig.layout.xaxis.tickvals = retention.columns
+    fig.layout.yaxis.tickvals = retention.index
+    fig.layout.margin.b = 100
+    fig
+
+except IndexError:
+    st.warning("This is throwing an exception, bear with us!")
