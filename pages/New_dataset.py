@@ -17,14 +17,6 @@ st.image(
 
 st.title("Cohort Analysis App [New Dataset]")
 
-st.write("")
-st.markdown(
-    """This  🎈Streamlit demo is based on the [following code](https://github.com/maladeep/cohort-retention-rate-analysis-in-python).
-
-It calculates the `retention rate` (the percentage of active customers compared to the total number of customers, split by month). This `retention rate` is then visualized and interpreted through a heatmap, powered by [Plotly](https://plotly.com/python/getting-started/).
-"""
-)
-
 st.info(
     f"""
         You can review the [dataset here](https://github.com/CharlyWargnier/cohort-analysis-test/blob/main/relay-foods.xlsx)
