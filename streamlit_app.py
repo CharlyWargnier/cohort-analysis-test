@@ -12,8 +12,28 @@ st.image(
     width=120,
 )
 
-
 st.title("Cohort Analysis App")
+
+with st.expander("To-do"):
+    # st.write(df)
+    st.markdown(
+        """
+    ###### 1. Add caching to all functions
+    ###### 2. Reverse axis for the heatmap on the new dataset page
+    ###### 3. Display dataframe on the new dataset page (currently throws an error)
+    """)
+
+with st.expander("Steps"):
+    # st.write(df)
+    st.markdown(
+        """
+    ###### 1. Load the data
+    ###### 2. Create the cohort
+    ###### 3. Calculate the retention rate
+    ###### 4. Visualize the retention rate
+    ###### 5. Interpret the retention rate
+    """
+    )
 
 st.write("")
 st.markdown(
@@ -34,8 +54,6 @@ with st.expander("Show the `Transactions` dataframe"):
     st.write(transaction_df)
 
 
-# Inspect missing values in the dataset
-# st.write(transaction_df.isnull().values.sum())
 # Replace the ' 's with NaN
 transaction_df = transaction_df.replace(" ", np.NaN)
 # Impute the missing values with mean imputation
@@ -43,7 +61,6 @@ transaction_df = transaction_df.fillna(transaction_df.mean())
 # Count the number of NaNs in the dataset to verify
 # st.write(transaction_df.isnull().values.sum())
 
-# st.write(transaction_df.info())
 
 for col in transaction_df.columns:
     # Check if the column is of object type
@@ -99,10 +116,6 @@ transaction_df_new = transaction_df[
     ["brand", "product_line", "list_price", "standard_cost"]
 ]
 new = [col for col in transaction_df_new]
-# show filtered dataframe (currently with 3 columns)
-# new
-
-# with st.form("my_form"):
 
 st.write("")
 
@@ -185,8 +198,7 @@ with col2:
         transaction_df = transaction_df[
             transaction_df["list_price"] > standard_cost_slider
         ]
-        
-        
+
 
 try:
 
@@ -208,8 +220,6 @@ try:
     # Coverting the retention rate into percentage and Rounding off.
     retention = retention.round(3) * 100
     retention.index = retention.index.strftime("%Y-%m")
-
-
 
     #############
 
